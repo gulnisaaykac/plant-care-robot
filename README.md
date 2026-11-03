@@ -1,40 +1,26 @@
-# Bitki Bakım ve İzleme Robotu
+# Plant Care and Monitoring Robot
 
-İç mekanda çalışan iki tekerlekli robot. Saksıya gider, toprak nemini ölçer ve koşullar uygunsa kısa süre su verir. Telemetri ve hareket komutları ThingsBoard Cloud üzerinden gider.
+An indoor two-wheel robot. It drives up to a pot, measures soil moisture, and waters for a short time when the safety checks pass. Telemetry and drive commands go through ThingsBoard Cloud.
 
-Losant raporda karşılaştırmadır. İkinci bir platforma veri gönderilmez.
+Losant is a comparison in the report. The robot does not publish to a second platform.
 
-## İlk iş
+## Pins
 
-1. ThingsBoard Avrupa hesabında `BitkiBakimRobotu` cihazını açın. Access token tek kişide kalsın.
-2. ESP32, USB-UART portundan veri kablosuyla bağlanır. Anahtar kapalıyken kart yalnız USB’den beslenir.
-3. İlk mesaj `v1/devices/me/telemetry` konusuna gider. Latest telemetry dolmadan panele geçilmez.
-
-Örnek telemetri:
-
-```json
-{"soil_moisture": 42, "distance_cm": 18, "battery_voltage": 11.8, "robot_state": "idle", "pump_state": false}
-```
-
-İlk komutlar `move` ve `stop`. Engel, süre ve bağlantı kopması kontrolleri ESP32 içindedir. Bulut kesilince motor ve pompa yerelde kapanır.
-
-## Pinler
-
-| İş | Pin |
+| Function | Pin |
 | --- | --- |
-| Motor yön ve hız | GPIO14, GPIO21, GPIO41, GPIO42 |
-| Mesafe sensörü I2C | GPIO38, GPIO39 |
-| Nem | GPIO1 |
-| Servo sinyali | GPIO40 |
-| Pompa kapısı | GPIO47 |
-| İleride IMU kesmesi | GPIO2, boş bırakın |
+| Motor direction and speed | GPIO14, GPIO21, GPIO41, GPIO42 |
+| Distance sensor I2C | GPIO38, GPIO39 |
+| Soil moisture | GPIO1 |
+| Servo signal | GPIO40 |
+| Pump gate | GPIO47 |
+| Future IMU interrupt | GPIO2, leave unused |
 
-Kamera pinlerine başka iş verilmez. Derleyicide PSRAM açık olmalıdır.
+Camera pins stay dedicated to the camera. Enable PSRAM in the build, or the camera fails.
 
-## Güç
+## Power
 
-Paket 3S, 11,1 V. Motor sürücüsü bu hattan beslenir. ESP32 yalnız sabit 5 V regülatörden, servo ve pompa 6,0 V’a ayarlı ayrı regülatörden beslenir. Eksi uçlar ortaktır. Sürücü kartının 5 V çıkışı ESP32’ye bağlanmaz.
+The pack is 3S, 11.1 V nominal. The motor driver takes that rail directly. The ESP32 is powered only from the fixed 5 V regulator. The servo and the pump share a separate regulator set to 6.0 V. All grounds are common. Do not connect the driver board's 5 V pin to the ESP32.
 
-## Depoya konmayacaklar
+## Keep out of the repository
 
-Access token, Wi-Fi parolası ve `.env` dosyaları bu depoya girmez.
+Do not commit the access token, the Wi-Fi password, or `.env` files.
